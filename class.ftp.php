@@ -5,7 +5,7 @@
  * See [root]/license.md for more information. This information must remain intact.
  */
 
-    class ftp_Client {
+    class ftp_client {
         
         private $id;
         
@@ -42,7 +42,7 @@
                 if (ftp_chdir($id, $path) === false) {
                     $this->getError("Impossible to Change Directory");
                 } else {
-                    $raw    = ftp_rawlist($id, ".");
+                    $raw    = ftp_rawlist($id, "-al .");
                     $parsed = $this->parseRawList($raw);
                     //Correct style
                     $dirs   = array();

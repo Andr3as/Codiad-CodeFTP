@@ -487,38 +487,105 @@
                         item = [];
                     }
                 }
-                var alertText   = '<table><tr><td>Name</td><td><abbr title="Size in Bytes">Size</abbr></td>';
-                alertText      += '<td>Type</td><td>Date</td><td>Permissions</td><td>Owner/Group</td></tr>';
-                for (var k = 0; k < info.length; k++) {
-                    alertText += "<tr>";
-                    alertText += "<td>"+info[k].name+"</td>";
-                    alertText += "<td>"+info[k].size+"</td>";
-                    alertText += "<td>"+info[k].type+"</td>";
-                    alertText += "<td>"+info[k].date+"</td>";
-                    alertText += "<td>"+info[k].rights+"</td>";
-                    alertText += "<td>"+info[k].owner+"/"+info[k].group+"</td>";
-                    alertText += "</tr>";
-                }
-                alertText += "</table>";
-                _this.addLogEntry(alertText);
+                _this.createInfoTable(info);
             });
         },
         
         //////////////////////////////////////////////////////////
         //
-        //  Change permissions of all selected files of the 
-        //      remote server
+        //  Display info of selected elements on the local server
         //
         //////////////////////////////////////////////////////////
-        serverFileMode: function() {
-            var mode = prompt("Permissions: (Octal Value)");
-            var obj, path;
-            for (var i = 0; i < this.serverSel.length; i++) {
-                obj = this.serverSel[i].reverse();
-                if ($(obj).attr('data-type') == 'file') {
-                    path = $(obj).attr('data-path');
-                    this.changeFileMode(path, mode);
+        localInfo: function() {
+            var _this = this;
+            var buf = [];
+            var obj, data, files;
+            for (var i = 0; i < this.localSel.length; i++) {
+                obj = this.localSel[i].reverse();
+                data = $(obj).attr('data-path');
+                if (buf == []) {
+                    buf[0] = data;
+                } else {
+                    buf.push(data);
                 }
+            }
+            files = JSON.stringify(buf);
+            this.showLoadingAnimation();
+            $.post(this.controller+"?action=getLocalInfo", { "files":files}, function(data){
+                _this.hideLoadingAnimation();
+                data = JSON.parse(data);
+                if (data.status == "error") {
+                    _this.addLogEntry(data.message);
+                } else {
+                    _this.createInfoTable(data.info);
+                }
+            });
+        },
+        
+        //////////////////////////////////////////////////////////
+        //
+        //  Create Table of informations
+        //
+        //  Parameters:
+        //
+        //  info - {Array} - File informations
+        //                      name - file name
+        //                      size - file size in bytes
+        //                      type - type of the file (File or Directory)
+        //                      date - Date of the last modification
+        //                      permissions - Permissions of the file
+        //                      owner - Owner of the file
+        //                      group - Group of the file
+        //
+        //////////////////////////////////////////////////////////
+        createInfoTable: function(info) {
+            var alertText   = '<table><tr><td>Name</td><td><abbr title="Size in Bytes">Size</abbr></td>';
+            alertText      += '<td>Type</td><td>Date</td><td>Permissions</td><td>Owner/Group</td></tr>';
+            for (var i = 0; i < info.length; i++) {
+                alertText += "<tr>";
+                alertText += "<td>"+info[i].name+"</td>";
+                alertText += "<td>"+info[i].size+"</td>";
+                alertText += "<td>"+info[i].type+"</td>";
+                alertText += "<td>"+info[i].date+"</td>";
+                alertText += "<td>"+info[i].permissions+"</td>";
+                alertText += "<td>"+info[i].owner+"/"+info[i].group+"</td>";
+                alertText += "</tr>";
+            }
+            alertText += "</table>";
+            this.addLogEntry(alertText);
+        },
+        
+        //////////////////////////////////////////////////////////
+        //
+        //  Change permissions of selection
+        //
+        //  Parameters:
+        //
+        //  selArr - {String} - Name of the array which contains
+        //                          all selected elements
+        //                          serverSel or localSel
+        //
+        //////////////////////////////////////////////////////////
+        fileModeSel: function(selArr) {
+            var obj, path;
+            var mode = prompt("Permissions: (Octal Value)");
+            if (mode === null) {
+                return false;
+            }
+            var type = selArr.replace("Sel", "");
+            type     = type.substring(0,1).toUpperCase() + type.substring(1);
+            for (var i = 0; i < this[selArr].length; i++) {
+                obj = this[selArr][i].reverse();
+                if (this.mode == "ftp") {
+                    if ($(obj).attr('data-type') == 'file') {
+                        path = $(obj).attr('data-path');
+                        this.changeFileMode(path, type, mode);
+                    }
+                } else {
+                    path = $(obj).attr('data-path');
+                    this.changeFileMode(path, type, mode);
+                }
+                
             }
         },
         
@@ -529,14 +596,16 @@
         //  Parameters:
         //
         //  path - {String} - Path of the file with filename
+        //  type - {String} - Location of the file
+        //                      either Server or Local
         //  mode - {String} - New permissions of the file as an
         //                      octal value
         //
         //////////////////////////////////////////////////////////
-        changeFileMode: function(path, mode) {
+        changeFileMode: function(path, type, mode) {
             var _this = this;
             this.showLoadingAnimation();
-            $.getJSON(this.controller+"?action=changeServerFileMode&path="+path+"&mode="+mode, function(data) {
+            $.getJSON(this.controller+"?action=change"+type+"FileMode&path="+path+"&mode="+mode, function(data) {
                 _this.hideLoadingAnimation();
                 _this.addLogEntry(data.message);
             });

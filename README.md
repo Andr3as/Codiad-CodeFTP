@@ -1,5 +1,9 @@
 #CodeFTP
 
+#Outdated
+
+Use Andr3as/Codiad-CodeTransfer
+
 This is a plugin for the cloud IDE Codiad. It adds a small ftp client to Codiad.
 
 ##Installation
@@ -32,7 +36,7 @@ This is a plugin for the cloud IDE Codiad. It adds a small ftp client to Codiad.
 ###Included
 
 ####CSS Loading animation
-[http://codepen.io/rlemon/pen/KyDgh](CSS Loading "More Information")
+[CSS Loading](http://codepen.io/rlemon/pen/KyDgh "More Information")
 
 #####Released under MIT License
-[http://blog.codepen.io/legal/licensing/](License of CodePen "More Information")
+[License of CodePen](http://blog.codepen.io/legal/licensing/ "More Information")
