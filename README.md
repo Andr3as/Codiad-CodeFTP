@@ -1,17 +1,17 @@
-#CodeFTP
-
 #Outdated
 
-Use Andr3as/Codiad-CodeTransfer
+Use [https://github.com/Andr3as/Codiad-CodeTransfer](Codiad-CodeTransfer)
+
+##CodeFTP
 
 This is a plugin for the cloud IDE Codiad. It adds a small ftp client to Codiad.
 
-##Installation
+###Installation
 
 - Download the zip file and unzip it to your plugin folder.
 - Enable this plugin in the plugin manager.
 
-##Features
+###Features
 
 - Filesystem naviagtion
 - Up- and downloading files
@@ -22,21 +22,21 @@ This is a plugin for the cloud IDE Codiad. It adds a small ftp client to Codiad.
 - Display file information
 - Multiselection
 
-##Screenshots
+###Screenshots
 
 ![Screen](http://andrano.de/CodeFTP/img/screen1.jpg "Screen")
 
 ![Screen](http://andrano.de/CodeFTP/img/screen2.jpg "Screen")
 
-###More Information
+####More Information
 
 [http://andrano.de/CodeFTP](http://andrano.de/CodeFTP "More Information")
 
 
-###Included
+####Included
 
-####CSS Loading animation
+#####CSS Loading animation
 [CSS Loading](http://codepen.io/rlemon/pen/KyDgh "More Information")
 
-#####Released under MIT License
+######Released under MIT License
 [License of CodePen](http://blog.codepen.io/legal/licensing/ "More Information")
