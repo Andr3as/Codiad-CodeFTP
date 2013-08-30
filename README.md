@@ -1,6 +1,6 @@
 #Outdated
 
-Use [https://github.com/Andr3as/Codiad-CodeTransfer](Codiad-CodeTransfer)
+Use [Codiad-CodeTransfer](https://github.com/Andr3as/Codiad-CodeTransfer)
 
 ##CodeFTP
 
