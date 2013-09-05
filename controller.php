@@ -4,15 +4,13 @@
  * as-is and without warranty under the MIT License. 
  * See [root]/license.md for more information. This information must remain intact.
  */
+    error_reporting(0);
 
     require_once('../../common.php');
     require_once('class.ftp.php');
     
     checkSession();
     set_time_limit(0);
-    //error_reporting(0);
-    
-    $localPath = "../../workspace/";
     
     switch($_GET['action']) {
         
@@ -48,8 +46,9 @@
         
         case 'transferFileToServer':
             if (isset($_GET['cPath']) && isset($_GET['sPath']) && isset($_GET['fName'])  && isset($_GET['mode'])) {
+                $path   = getWorkspacePath($_GET['cPath']);
                 $ftp    = new ftp_client();
-                echo $ftp->transferFileToServer($_GET['cPath'], $_GET['sPath'], $_GET['fName'], $_GET['mode']);
+                echo $ftp->transferFileToServer($path, $_GET['sPath'], $_GET['fName'], $_GET['mode']);
             } else {
                 echo '{"status":"error","message":"Missing Parameter!"}';
             }
@@ -57,8 +56,9 @@
             
         case 'transferFileToClient':
             if (isset($_GET['cPath']) && isset($_GET['sPath']) && isset($_GET['fName'])  && isset($_GET['mode'])) {
+                $path   = getWorkspacePath($_GET['cPath']);
                 $ftp    = new ftp_client();
-                echo $ftp->transferFileToClient($_GET['cPath'], $_GET['sPath'], $_GET['fName'], $_GET['mode']);
+                echo $ftp->transferFileToClient($path, $_GET['sPath'], $_GET['fName'], $_GET['mode']);
             } else {
                 echo '{"status":"error","message":"Missing Parameter!"}';
             }
@@ -66,8 +66,7 @@
             
         case 'createLocalDirectory':
             if (isset($_GET['path'])) {
-                $path = $_GET['path'];
-                $path = $localPath . $path;
+                $path = getWorkspacePath($_GET['path']);
                 if (mkdir($path)) {
                     echo '{"status":"success","message":"Directory Created"}';
                 } else {
@@ -134,7 +133,7 @@
         
         case 'changeLocalFileMode':
             if (isset($_GET['path']) && isset($_GET['mode'])) {
-                $path = $localPath . $_GET['path'];
+                $path = getWorkspacePath($_GET['path']);
                 $mode = $_GET['mode'];
                 if ($mode[0] != '0') {
                     $mode = '0'.$mode;
@@ -161,7 +160,7 @@
             
         case 'renameLocal':
             if (isset($_GET['path']) && isset($_GET['old']) && isset($_GET['new'])) {
-                $path = $localPath.$_GET['path'];
+                $path = getWorkspacePath($_GET['path']);
                 if (rename($path."/".$_GET['old'], $path."/".$_GET['new'])) {
                     echo '{"status":"success","message":"Successfully Renamed"}';
                 } else {
@@ -222,7 +221,7 @@
         $resInfo= array();
         $result['status'] = "success";
         foreach($files as $path) {
-            $path = "../../workspace/" . $path;
+            $path = getWorkspacePath($path);
             $info['name'] = basename($path);
             $size = filesize($path);
             if ($size === false) {
@@ -324,5 +323,21 @@
                     (($perms & 0x0200) ? 't' : 'x' ) :
                     (($perms & 0x0200) ? 'T' : '-'));
         return $info;
+    }
+    
+    function getWorkspacePath($path) {
+        if (strpos($path, "/") == 0) {
+            //Unix absolute path
+            return $path;
+        }
+        if (strpos($path, ":/") !== false) {
+            //Windows absolute path
+            return $path;
+        }
+        if (strpos($path, ":\\") !== false) {
+            //Windows absolute path
+            return $path;
+        }
+        return "../../workspace/".$path;
     }
 ?>

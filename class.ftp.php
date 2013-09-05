@@ -99,10 +99,8 @@
         //  Transfer a file to remote server
         /////////////////////////////////////////////////////////////////////////
         public function transferFileToServer($cPath, $sPath, $fName, $mode) {
-            //$_GET['cPath'], $_GET['sPath'], $_GET['mode']
             set_time_limit(0);
             $this->connect();
-            $cPath  = "../../workspace/" . $cPath;
             $msg    = array();
             if (isset($this->id)) {
                 if (!ftp_chdir($this->id, $sPath)) {
@@ -135,7 +133,6 @@
         public function transferFileToClient($cPath, $sPath, $fName, $mode) {
             set_time_limit(0);
             $this->connect();
-            $cPath  = "../../workspace/" . $cPath;
             $msg    = array();
             if (isset($this->id)) {
                 if (!ftp_chdir($this->id, $sPath)) {
